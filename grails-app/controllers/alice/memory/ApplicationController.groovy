@@ -1,14 +1,32 @@
 package alice.memory
 
-import grails.core.GrailsApplication
-import grails.plugins.*
+import alice.memory.core.DialogService
+import grails.converters.JSON
 
-class ApplicationController implements PluginManagerAware {
-
-    GrailsApplication grailsApplication
-    GrailsPluginManager pluginManager
+class ApplicationController {
+    DialogService dialogService
 
     def index() {
-        [grailsApplication: grailsApplication, pluginManager: pluginManager]
+        def json = request.JSON
+
+        String userId = json.session.user_id
+        long messageId = json.session.message_id
+        String sessionId = json.session.session_id
+        String text = json.request.original_utterance
+
+        String responseText = dialogService.call(userId, text)
+
+        render([
+                response: [
+                        text       : responseText,
+                        end_session: false
+                ],
+                session : [
+                        session_id: sessionId,
+                        message_id: messageId,
+                        user_id   : userId
+                ],
+                version : '1.0'
+        ] as JSON)
     }
 }

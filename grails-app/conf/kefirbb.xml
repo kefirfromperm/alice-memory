@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="http://kefirsf.org/kefirbb/schema"
+               xsi:schemaLocation="http://kefirsf.org/kefirbb/schema http://kefirsf.org/kefirbb/schema/kefirbb-1.2.xsd">
+    <!-- Replace pronouns -->
+    <scope name="ROOT">
+        <code >
+            <pattern ignoreCase="true">я</pattern>
+            <template>ты</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">меня</pattern>
+            <template>тебя</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">мне</pattern>
+            <template>тебе</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">мной</pattern>
+            <pattern ignoreCase="true">мною</pattern>
+            <template>тобой</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">обо мне</pattern>
+            <template>о тебе</template>
+        </code>
+
+        <code >
+            <pattern ignoreCase="true">мы</pattern>
+            <template>вы</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">нас</pattern>
+            <template>вас</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">нам</pattern>
+            <template>вам</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">нами</pattern>
+            <template>вами</template>
+        </code>
+
+        <code >
+            <pattern ignoreCase="true">ты</pattern>
+            <template>я</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">тебя</pattern>
+            <template>меня</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">тебе</pattern>
+            <template>мне</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">тобой</pattern>
+            <pattern ignoreCase="true">тобою</pattern>
+            <template>мной</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">о тебе</pattern>
+            <template>обо мне</template>
+        </code>
+
+        <code >
+            <pattern ignoreCase="true">мой</pattern>
+            <template>твой</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моего</pattern>
+            <template>твоего</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моему</pattern>
+            <template>твоему</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моим</pattern>
+            <template>твоим</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моём</pattern>
+            <template>твоём</template>
+        </code>
+
+
+        <code >
+            <pattern ignoreCase="true">моя</pattern>
+            <template>твоя</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моей</pattern>
+            <template>твоей</template>
+        </code>
+
+
+        <code >
+            <pattern ignoreCase="true"> мое </pattern>
+            <pattern ignoreCase="true"> моё </pattern>
+            <template> твоё </template>
+        </code>
+
+        <code >
+            <pattern ignoreCase="true"> мои </pattern>
+            <template> твои </template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моих</pattern>
+            <template>твоих</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моим</pattern>
+            <template>твоим</template>
+        </code>
+        <code >
+            <pattern ignoreCase="true">моими</pattern>
+            <template>твоими</template>
+        </code>
+    </scope>
+</configuration>
