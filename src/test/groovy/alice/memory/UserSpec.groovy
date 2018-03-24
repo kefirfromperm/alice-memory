@@ -1,10 +1,9 @@
 package alice.memory
 
 import grails.testing.gorm.DomainUnitTest
-import org.junit.Ignore
 import spock.lang.Specification
+import spock.lang.Unroll
 
-@Ignore
 class UserSpec extends Specification implements DomainUnitTest<User> {
 
     def setup() {
@@ -13,8 +12,27 @@ class UserSpec extends Specification implements DomainUnitTest<User> {
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
+    void "test correct user"() {
+        given: 'a user'
+            User user = new User(yandexId: '1234')
+        expect: "fix me"
+            user.validate()
+    }
+
+    @Unroll
+    void 'test bad user with id #yandexId'(String yandexId, String code) {
+        given: 'a user'
+            User user = new User(yandexId: yandexId)
+        when: "fix me"
+            boolean valid = user.validate()
+        then: 'not valid'
+            !valid
+            user.hasErrors()
+            user.errors.getFieldError('yandexId').code == code
+        where:
+            yandexId | code
+            null     | 'nullable'
+            ''       | 'nullable'
+            ' '      | 'nullable'
     }
 }

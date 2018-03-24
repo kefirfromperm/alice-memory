@@ -12,6 +12,7 @@ class Memory {
     static belongsTo = [user:User]
 
     static constraints = {
+        user nullable: false
         text nullable: false, blank: false
     }
 }
