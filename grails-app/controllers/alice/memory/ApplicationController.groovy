@@ -6,6 +6,8 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class ApplicationController {
+    static allowedMethods = [index: 'POST']
+
     DialogService dialogService
 
     def index() {

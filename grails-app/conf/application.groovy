@@ -22,7 +22,8 @@ spring {
 // Spring Actuator Endpoints are Disabled by Default
 endpoints {
     enabled = false
-    jmx.enabled = true
+    health.enabled = true
+//    jmx.enabled = true
 }
 
 grails {
@@ -63,7 +64,7 @@ dataSource {
 environments {
     development {
         dataSource {
-            dbCreate = 'update'
+            dbCreate = 'none'
             url = 'jdbc:postgresql://localhost:5432/alice-dev'
             username = 'postgres'
             password = 'postgres'
