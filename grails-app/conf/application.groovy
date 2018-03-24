@@ -63,7 +63,7 @@ dataSource {
 environments {
     development {
         dataSource {
-            dbCreate = 'create-drop'
+            dbCreate = 'update'
             url = 'jdbc:postgresql://localhost:5432/alice-dev'
             username = 'postgres'
             password = 'postgres'
