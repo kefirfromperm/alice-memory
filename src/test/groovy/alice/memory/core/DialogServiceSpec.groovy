@@ -1,13 +1,20 @@
 package alice.memory.core
 
 import alice.memory.CommandType
+import alice.memory.Memory
+import alice.memory.User
+import alice.memory.dao.MemoryDaoService
+import alice.memory.dao.UserDaoService
 import grails.testing.services.ServiceUnitTest
+import org.kefirsf.bb.BBProcessorFactory
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogService> {
-
     def setup() {
+        service.textProcessor = BBProcessorFactory.instance.create()
+        service.userDaoService = Mock(UserDaoService)
+        service.memoryDaoService = Mock(MemoryDaoService)
     }
 
     def cleanup() {
@@ -27,5 +34,63 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
             'Напомнить'                   | CommandType.REMIND
             'Напомни'                     | CommandType.REMIND
             'Что-то с памятью моей стало' | null
+    }
+
+    @Unroll
+    void 'test process text #text'(String expected, String text) {
+        expect:
+            expected == service.process(text)
+        where:
+            expected              | text
+            'Привет'              | 'Привет'
+            'Привет медвед'       | 'привет медвед'
+            'Мне сегодня к врачу' | 'Мне сегодня к врачу'
+    }
+
+    void 'remember'() {
+        given: 'a user'
+            User user = new User(yandexId: '1234')
+        when: 'remember text'
+            String response = service.remember(user, 'Test text')
+        then:
+            1 * service.memoryDaoService.saveMemory(user, 'Test text')
+            response == 'Запомнила.'
+    }
+
+    void 'remember empty text'() {
+        given: 'a user'
+            User user = new User(yandexId: '1234')
+        when: 'remember empty text'
+            String response = service.remember(user, '')
+        then:
+            0 * service.memoryDaoService.saveMemory(user, 'Test text')
+            response == 'Что запомнить?'
+    }
+
+    void 'test remind'() {
+        given: 'a user'
+            User user = new User(yandexId: '1234')
+            service.memoryDaoService.findByUser(user) >> new Memory(text: 'Test response')
+        when: 'call remind'
+            String response = service.remind(user)
+        then:
+            response == 'Test response'
+    }
+
+    void 'test remind without any memories'() {
+        given: 'a user'
+            User user = new User(yandexId: '1234')
+            service.memoryDaoService.findByUser(user) >> null
+        when: 'call remind'
+            String response = service.remind(user)
+        then:
+            response == 'Я ничего не припоминаю.'
+    }
+
+    void 'test call without command'() {
+        when: 'call without command'
+            String response = service.call('1234', 'test')
+        then:
+            response == 'Я могу запомнить и напомнить.'
     }
 }

@@ -35,8 +35,12 @@ class DialogService {
     }
 
     String remember(User user, String text) {
-        memoryDaoService.saveMemory(user, text)
-        return 'Запомнила.'
+        if (!StringUtils.isBlank(text)) {
+            memoryDaoService.saveMemory(user, text)
+            return 'Запомнила.'
+        } else {
+            return 'Что запомнить?'
+        }
     }
 
     String remind(User user) {
@@ -48,12 +52,11 @@ class DialogService {
         }
     }
 
-    String process(String text){
-        return StringUtils.capitalize(textProcessor.process(text))
+    String process(String text) {
+        return StringUtils.capitalize(text)
     }
 
     DialogCommand determineCommand(String text) {
-
         CommandType type = null
         int start = -1
         int length = 0

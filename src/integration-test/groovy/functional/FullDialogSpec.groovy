@@ -58,7 +58,7 @@ class FullDialogSpec extends Specification {
         then:'recall'
             response.statusCode.is2xxSuccessful()
 
-            response.json.response.text == 'Завтра тебе к врачу'
+            response.json.response.text == 'Завтра мне к врачу'
             response.json.response.end_session == false
 
             response.json.session.session_id == '2eac4854-fce721f3-b845abba-20d60'

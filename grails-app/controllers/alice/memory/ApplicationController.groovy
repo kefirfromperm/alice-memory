@@ -2,7 +2,9 @@ package alice.memory
 
 import alice.memory.core.DialogService
 import grails.converters.JSON
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class ApplicationController {
     DialogService dialogService
 
@@ -14,7 +16,11 @@ class ApplicationController {
         String sessionId = json.session.session_id
         String text = json.request.original_utterance
 
+        log.info("Request from user $userId: $text")
+
         String responseText = dialogService.call(userId, text)
+
+        log.info("Response to user $userId: $responseText")
 
         render([
                 response: [
