@@ -19,7 +19,7 @@ class DialogService {
     String call(String userId, String text) {
         DialogCommand command = determineCommand(text)
 
-        User user = userDaoService.findOrCreate(userId)
+        User user = userDaoService.findOrSave(userId)
         String response
         switch (command?.type) {
             case CommandType.REMEMBER:

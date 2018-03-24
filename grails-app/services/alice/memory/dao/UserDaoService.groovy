@@ -7,7 +7,7 @@ import grails.gorm.transactions.Transactional
 @Service(User)
 abstract class UserDaoService {
     @Transactional
-    User findOrCreate(String yandexId){
-        return User.findOrCreateByYandexId(yandexId)
+    User findOrSave(String yandexId) {
+        return User.findOrSaveByYandexId(yandexId)
     }
 }
