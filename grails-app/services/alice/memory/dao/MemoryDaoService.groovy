@@ -1,12 +1,12 @@
 package alice.memory.dao
 
 import alice.memory.Memory
-import alice.memory.User
+import alice.memory.AliceUser
 import grails.gorm.services.Service
 
 @Service(Memory)
 interface MemoryDaoService {
-    Memory saveMemory(User user, String text)
+    Memory saveMemory(AliceUser user, String text)
 
-    Memory findByUser(User user)
+    Memory findByUser(AliceUser user)
 }

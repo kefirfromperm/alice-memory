@@ -4,7 +4,7 @@ import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class UserSpec extends Specification implements DomainUnitTest<User> {
+class AliceUserSpec extends Specification implements DomainUnitTest<AliceUser> {
 
     def setup() {
     }
@@ -14,7 +14,7 @@ class UserSpec extends Specification implements DomainUnitTest<User> {
 
     void "test correct user"() {
         given: 'a user'
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
         expect: "fix me"
             user.validate()
     }
@@ -22,7 +22,7 @@ class UserSpec extends Specification implements DomainUnitTest<User> {
     @Unroll
     void 'test bad user with id #yandexId'(String yandexId, String code) {
         given: 'a user'
-            User user = new User(yandexId: yandexId)
+            AliceUser user = new AliceUser(yandexId: yandexId)
         when: "fix me"
             boolean valid = user.validate()
         then: 'not valid'

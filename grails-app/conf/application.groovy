@@ -57,47 +57,32 @@ hibernate {
 dataSource {
     pooled = true
     jmxExport = true
-    driverClassName = 'org.h2.Driver'
-    username = 'sa'
-    password = ''
+    driverClassName = 'org.postgresql.Driver'
 }
 
 environments {
     development {
         dataSource {
             dbCreate = 'create-drop'
-            url = 'jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE'
+            url = 'jdbc:postgresql://localhost:5432/alice-dev'
+            username = 'postgres'
+            password = 'postgres'
         }
     }
     test {
         dataSource {
-            dbCreate = 'update'
-            url = 'jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE'
+            dbCreate = 'create-drop'
+            url = 'jdbc:postgresql://localhost:5432/alice-test'
+            username = 'postgres'
+            password = 'postgres'
         }
     }
     production {
         dataSource {
             dbCreate = 'none'
-            url = 'jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE'
-            properties {
-                jmxEnabled = true
-                initialSize = 5
-                maxActive = 50
-                minIdle = 5
-                maxIdle = 25
-                maxWait = 10000
-                maxAge = 600000
-                timeBetweenEvictionRunsMillis = 5000
-                minEvictableIdleTimeMillis = 60000
-                validationQuery = 'SELECT 1'
-                validationQueryTimeout = '3'
-                validationInterval = 15000
-                testOnBorrow = true
-                testWhileIdle = true
-                testOnReturn = false
-                jdbcInterceptors = 'ConnectionState'
-                defaultTransactionIsolation = 2 // TRANSACTION_READ_COMMITTED
-            }
+            url = 'jdbc:postgresql://localhost:5432/alice'
+            username = 'postgres'
+            password = 'postgres'
         }
     }
 }

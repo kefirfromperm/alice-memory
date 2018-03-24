@@ -3,23 +3,25 @@ package alice.memory.core
 import alice.memory.CommandType
 import alice.memory.DialogCommand
 import alice.memory.Memory
-import alice.memory.User
+import alice.memory.AliceUser
 import alice.memory.dao.MemoryDaoService
-import alice.memory.dao.UserDaoService
+import alice.memory.dao.AliceUserDaoService
+import grails.gorm.transactions.ReadOnly
+import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 import org.kefirsf.bb.TextProcessor
 
 @Slf4j
 class DialogService {
-    UserDaoService userDaoService
+    AliceUserDaoService aliceUserDaoService
     MemoryDaoService memoryDaoService
     TextProcessor textProcessor
 
     String call(String userId, String text) {
         DialogCommand command = determineCommand(text)
 
-        User user = userDaoService.findOrSave(userId)
+        AliceUser user = aliceUserDaoService.findOrSave(userId)
         String response
         switch (command?.type) {
             case CommandType.REMEMBER:
@@ -34,7 +36,7 @@ class DialogService {
         return response
     }
 
-    String remember(User user, String text) {
+    String remember(AliceUser user, String text) {
         if (!StringUtils.isBlank(text)) {
             memoryDaoService.saveMemory(user, text)
             return 'Запомнила.'
@@ -43,7 +45,7 @@ class DialogService {
         }
     }
 
-    String remind(User user) {
+    String remind(AliceUser user) {
         Memory memory = memoryDaoService.findByUser(user)
         if (memory) {
             return process(memory.text)

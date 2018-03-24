@@ -14,7 +14,7 @@ class MemorySpec extends Specification implements DomainUnitTest<Memory> {
 
     void "test correct memory validation"() {
         given: 'a correct memory'
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
             Memory memory = new Memory(user: user, text: 'test text')
         when: 'validate'
             boolean valid = memory.validate()
@@ -37,7 +37,7 @@ class MemorySpec extends Specification implements DomainUnitTest<Memory> {
     void 'test memory with text \"#text\"'(String text, String code) {
         given:
             "a memory with text $text"
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
             Memory memory = new Memory(user: user, text: text)
         when: 'validate'
             boolean valid = memory.validate()

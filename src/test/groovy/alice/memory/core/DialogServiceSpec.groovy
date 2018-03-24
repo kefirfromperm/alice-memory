@@ -2,9 +2,9 @@ package alice.memory.core
 
 import alice.memory.CommandType
 import alice.memory.Memory
-import alice.memory.User
+import alice.memory.AliceUser
 import alice.memory.dao.MemoryDaoService
-import alice.memory.dao.UserDaoService
+import alice.memory.dao.AliceUserDaoService
 import grails.testing.services.ServiceUnitTest
 import org.kefirsf.bb.BBProcessorFactory
 import spock.lang.Specification
@@ -13,7 +13,7 @@ import spock.lang.Unroll
 class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogService> {
     def setup() {
         service.textProcessor = BBProcessorFactory.instance.create()
-        service.userDaoService = Mock(UserDaoService)
+        service.aliceUserDaoService = Mock(AliceUserDaoService)
         service.memoryDaoService = Mock(MemoryDaoService)
     }
 
@@ -49,7 +49,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
 
     void 'remember'() {
         given: 'a user'
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
         when: 'remember text'
             String response = service.remember(user, 'Test text')
         then:
@@ -59,7 +59,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
 
     void 'remember empty text'() {
         given: 'a user'
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
         when: 'remember empty text'
             String response = service.remember(user, '')
         then:
@@ -69,7 +69,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
 
     void 'test remind'() {
         given: 'a user'
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
             service.memoryDaoService.findByUser(user) >> new Memory(text: 'Test response')
         when: 'call remind'
             String response = service.remind(user)
@@ -79,7 +79,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
 
     void 'test remind without any memories'() {
         given: 'a user'
-            User user = new User(yandexId: '1234')
+            AliceUser user = new AliceUser(yandexId: '1234')
             service.memoryDaoService.findByUser(user) >> null
         when: 'call remind'
             String response = service.remind(user)

@@ -2,7 +2,7 @@ package alice.memory
 
 import java.time.LocalDateTime
 
-class User {
+class AliceUser {
     String yandexId
 
     LocalDateTime dateCreated
