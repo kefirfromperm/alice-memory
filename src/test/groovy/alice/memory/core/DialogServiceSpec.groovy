@@ -4,6 +4,7 @@ import alice.memory.CommandType
 import alice.memory.DialogResponse
 import alice.memory.Memory
 import alice.memory.AliceUser
+import alice.memory.RawCommand
 import alice.memory.dao.MemoryDaoService
 import alice.memory.dao.AliceUserDaoService
 import grails.testing.services.ServiceUnitTest
@@ -24,7 +25,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
     @Unroll
     void "test determine command #command for \"#text\""(String text, CommandType command) {
         expect: "determine right command"
-            command == service.determineCommand(text)?.type
+            command == service.determineCommand(new RawCommand(text: text))?.type
         where:
             text                          | command
             'Запомнить'                   | CommandType.REMEMBER
@@ -93,7 +94,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
 
     void 'test call without command'() {
         when: 'call without command'
-            DialogResponse response = service.call('1234', 'test')
+            DialogResponse response = service.call(new RawCommand(yandexId: '1234', text: 'test'))
         then:
             response.text == 'Я могу запомнить и напомнить.'
     }

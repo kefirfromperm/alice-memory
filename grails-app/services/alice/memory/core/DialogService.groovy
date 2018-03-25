@@ -1,29 +1,24 @@
 package alice.memory.core
 
-import alice.memory.Button
-import alice.memory.CommandType
-import alice.memory.DialogCommand
-import alice.memory.DialogResponse
-import alice.memory.Memory
-import alice.memory.AliceUser
-import alice.memory.dao.MemoryDaoService
+import alice.memory.*
 import alice.memory.dao.AliceUserDaoService
-import grails.gorm.transactions.ReadOnly
-import grails.gorm.transactions.Transactional
+import alice.memory.dao.MemoryDaoService
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
 import org.kefirsf.bb.TextProcessor
 
 @Slf4j
+@CompileStatic
 class DialogService {
     AliceUserDaoService aliceUserDaoService
     MemoryDaoService memoryDaoService
     TextProcessor textProcessor
 
-    DialogResponse call(String userId, String text) {
-        DialogCommand command = determineCommand(text)
+    DialogResponse call(RawCommand rawCommand) {
+        DialogCommand command = determineCommand(rawCommand)
 
-        AliceUser user = aliceUserDaoService.findOrSave(userId)
+        AliceUser user = aliceUserDaoService.findOrSave(rawCommand.yandexId)
         DialogResponse response
         switch (command?.type) {
             case CommandType.REMEMBER:
@@ -66,14 +61,14 @@ class DialogService {
         return StringUtils.capitalize(text)
     }
 
-    DialogCommand determineCommand(String text) {
+    DialogCommand determineCommand(RawCommand rawCommand) {
         CommandType type = null
         int start = -1
         int length = 0
 
         CommandType.values().each { CommandType ct ->
             ct.phrases.each { String phrase ->
-                int position = StringUtils.indexOfIgnoreCase(text, phrase)
+                int position = StringUtils.indexOfIgnoreCase(rawCommand.text, phrase)
                 if (position >= 0 && (type == null || position < start)) {
                     type = ct
                     start = position
@@ -85,7 +80,7 @@ class DialogService {
         if (type != null) {
             return new DialogCommand(
                     type: type,
-                    text: text.substring(start + length).trim()
+                    text: rawCommand.text.substring(start + length).trim()
             )
         } else {
             return null

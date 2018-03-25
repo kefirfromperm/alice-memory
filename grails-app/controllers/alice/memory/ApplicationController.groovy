@@ -13,14 +13,19 @@ class ApplicationController {
     def index() {
         def json = request.JSON
 
-        String userId = json.session.user_id
         long messageId = json.session.message_id
         String sessionId = json.session.session_id
-        String text = json.request.original_utterance
 
-        log.info("Request from user $userId: $text")
+        RawCommand command = new RawCommand()
 
-        DialogResponse dialogResponse = dialogService.call(userId, text)
+        String userId = json.session.user_id
+        command.yandexId = userId
+        command.text = json.request.original_utterance
+        command.payload = json.request.payload
+
+        log.info("Request from user $userId: $command")
+
+        DialogResponse dialogResponse = dialogService.call(command)
 
         log.info("Response to user $userId: ${dialogResponse}")
 
@@ -49,7 +54,7 @@ class ApplicationController {
                 session : [
                         session_id: sessionId,
                         message_id: messageId,
-                        user_id   : userId
+                        user_id   : command.yandexId
                 ],
                 version : '1.0'
         ] as JSON)

@@ -7,7 +7,8 @@ import groovy.transform.ToString
 @ToString
 @EqualsAndHashCode
 @CompileStatic
-class DialogCommand {
-    CommandType type
+class RawCommand {
+    String yandexId
     String text
+    Map payload
 }
