@@ -1,7 +1,12 @@
 package alice.memory
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
 import java.time.LocalDateTime
 
+@ToString(includeNames = true, includePackage = false)
+@EqualsAndHashCode
 class Memory {
     AliceUser user
     String text

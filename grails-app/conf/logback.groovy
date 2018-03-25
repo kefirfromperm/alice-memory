@@ -38,4 +38,6 @@ if(Environment.current == Environment.TEST){
     logger('org.hibernate.SQL', DEBUG)
 }
 
+logger('alice.memory.ApplicationController', INFO)
+
 root(ERROR, ['STDOUT'])
