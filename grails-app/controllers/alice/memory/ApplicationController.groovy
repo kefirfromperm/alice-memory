@@ -15,48 +15,64 @@ class ApplicationController {
 
         long messageId = json.session.message_id
         String sessionId = json.session.session_id
-
-        RawCommand command = new RawCommand()
-
         String userId = json.session.user_id
-        command.yandexId = userId
-        command.text = json.request.original_utterance
-        command.payload = json.request.payload
 
-        log.info("Request from user $userId: $command")
+        try {
+            RawCommand command = new RawCommand()
+            command.yandexId = userId
+            command.text = json.request.original_utterance
+            command.payload = json.request.payload
+            command.buttonPressed = (json.request.type == 'ButtonPressed')
 
-        DialogResponse dialogResponse = dialogService.call(command)
+            log.info("Request from user $userId: $command")
 
-        log.info("Response to user $userId: ${dialogResponse}")
+            DialogResponse dialogResponse = dialogService.call(command)
 
-        def protocolResponse = [
-                text       : dialogResponse.text,
-                end_session: false
-        ]
+            log.info("Response to user $userId: ${dialogResponse}")
 
-        if (dialogResponse.buttons) {
-            protocolResponse.buttons = dialogResponse.buttons.collect { Button button ->
-                def protocolButton = [
-                        title: button.title,
-                        hide : button.hide
-                ]
+            def protocolResponse = [
+                    text       : dialogResponse.text,
+                    end_session: false
+            ]
 
-                if (button.payload) {
-                    protocolButton.payload = button.payload
+            if (dialogResponse.buttons) {
+                protocolResponse.buttons = dialogResponse.buttons.collect { Button button ->
+                    def protocolButton = [
+                            title: button.title,
+                            hide : button.hide
+                    ]
+
+                    if (button.payload) {
+                        protocolButton.payload = button.payload
+                    }
+
+                    return protocolButton
                 }
-
-                return protocolButton
             }
-        }
 
-        render([
-                response: protocolResponse,
-                session : [
-                        session_id: sessionId,
-                        message_id: messageId,
-                        user_id   : command.yandexId
-                ],
-                version : '1.0'
-        ] as JSON)
+            render([
+                    response: protocolResponse,
+                    session : [
+                            session_id: sessionId,
+                            message_id: messageId,
+                            user_id   : userId
+                    ],
+                    version : '1.0'
+            ] as JSON)
+        } catch (Exception e) {
+            log.error(e.message, e)
+            render([
+                    response: [
+                            text       : 'Что-то пошло не так.',
+                            end_session: false
+                    ],
+                    session : [
+                            session_id: sessionId,
+                            message_id: messageId,
+                            user_id   : userId
+                    ],
+                    version : '1.0'
+            ] as JSON)
+        }
     }
 }

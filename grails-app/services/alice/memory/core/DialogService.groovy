@@ -25,7 +25,10 @@ class DialogService {
                 response = remember(user, command.text)
                 break
             case CommandType.REMIND:
-                response = remind(user)
+                response = remind(user, rawCommand.payload ? rawCommand.payload['offset'] as int : 0)
+                break
+            case CommandType.FORGET:
+                response = forget(user, rawCommand.payload['id'] as long)
                 break
             default:
                 response = new DialogResponse(text: 'Я могу запомнить и напомнить.')
@@ -42,18 +45,26 @@ class DialogService {
         }
     }
 
-    DialogResponse remind(AliceUser user) {
-        Memory memory = memoryDaoService.findByUser(user)
+    DialogResponse remind(AliceUser user, int offset) {
+        Memory memory = memoryDaoService.findByUser(user, offset)
         if (memory) {
             return new DialogResponse(
                     text: process(memory.text),
                     buttons: [
-                            new Button(title: 'Ещё', payload: [offset: 1], hide: true),
-                            new Button(title: 'Забудь', hide: true)
+                            new Button(title: 'Ещё', payload: [command: 'more', offset: 1], hide: true),
+                            new Button(title: 'Забудь', payload: [command: 'forget', id: memory.id], hide: true)
                     ]
             )
         } else {
             return new DialogResponse(text: 'Я ничего не припоминаю.')
+        }
+    }
+
+    DialogResponse forget(AliceUser user, long id) {
+        if (memoryDaoService.forget(id, user)) {
+            return new DialogResponse(text: 'Забыла.')
+        } else {
+            return new DialogResponse(text: 'Я не смогла забыть.')
         }
     }
 
@@ -62,13 +73,28 @@ class DialogService {
     }
 
     DialogCommand determineCommand(RawCommand rawCommand) {
+        if (rawCommand.buttonPressed) {
+            String command = rawCommand.payload['command']
+            if (command == 'more') {
+                return new DialogCommand(type: CommandType.REMIND, text: '')
+            } else if (command == 'forget') {
+                return new DialogCommand(type: CommandType.FORGET, text: '')
+            } else {
+                return null
+            }
+        } else {
+            return determineCommandByText(rawCommand.text)
+        }
+    }
+
+    private static DialogCommand determineCommandByText(String text) {
         CommandType type = null
         int start = -1
         int length = 0
 
         CommandType.values().each { CommandType ct ->
             ct.phrases.each { String phrase ->
-                int position = StringUtils.indexOfIgnoreCase(rawCommand.text, phrase)
+                int position = StringUtils.indexOfIgnoreCase(text, phrase)
                 if (position >= 0 && (type == null || position < start)) {
                     type = ct
                     start = position
@@ -80,7 +106,7 @@ class DialogService {
         if (type != null) {
             return new DialogCommand(
                     type: type,
-                    text: rawCommand.text.substring(start + length).trim()
+                    text: text.substring(start + length).trim()
             )
         } else {
             return null

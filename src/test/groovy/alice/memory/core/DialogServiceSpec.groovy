@@ -39,6 +39,18 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
     }
 
     @Unroll
+    void 'test determine button command #command'(String command, CommandType commandType) {
+        expect: "determine right command"
+            commandType == service.determineCommand(
+                    new RawCommand(buttonPressed: true, payload: [command: command])
+            )?.type
+        where:
+            command  | commandType
+            'more'   | CommandType.REMIND
+            'forget' | CommandType.FORGET
+    }
+
+    @Unroll
     void 'test process text #text'(String expected, String text) {
         expect:
             expected == service.process(text)
@@ -72,23 +84,30 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
     void 'test remind'() {
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234')
-            service.memoryDaoService.findByUser(user) >> new Memory(text: 'Test response')
+            def memory = new Memory(text: 'Test response')
+            memory.id = 42
+            service.memoryDaoService.findByUser(user, 0) >> memory
         when: 'call remind'
-            DialogResponse response = service.remind(user)
+            DialogResponse response = service.remind(user, 0)
         then:
             response.text == 'Test response'
             response.buttons.size() == 2
             response.buttons[0].title == 'Ещё'
+            response.buttons[0].payload.command == 'more'
+            response.buttons[0].payload.offset == 1
             response.buttons[1].title == 'Забудь'
+            response.buttons[1].payload.command == 'forget'
+            response.buttons[1].payload.id == 42
     }
 
     void 'test remind without any memories'() {
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234')
-            service.memoryDaoService.findByUser(user) >> null
+            service.memoryDaoService.findByUser(user, 0) >> null
         when: 'call remind'
-            DialogResponse response = service.remind(user)
+            DialogResponse response = service.remind(user, 0)
         then:
+
             response.text == 'Я ничего не припоминаю.'
     }
 

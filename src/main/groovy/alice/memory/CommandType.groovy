@@ -5,7 +5,8 @@ import groovy.transform.CompileStatic
 @CompileStatic
 enum CommandType {
     REMEMBER(['запомнить','запомни']),
-    REMIND(['напомнить', 'напомни'])
+    REMIND(['напомнить', 'напомни']),
+    FORGET([])
 
     final Iterable<String> phrases
 

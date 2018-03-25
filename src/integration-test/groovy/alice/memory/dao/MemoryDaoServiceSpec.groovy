@@ -32,4 +32,16 @@ class MemoryDaoServiceSpec extends Specification {
             memory != null
             memory.text == TEXT
     }
+
+    void 'test update'() {
+        given: 'a user'
+            AliceUser user = new AliceUser(yandexId: '1234').save()
+        and: 'a memory'
+            Memory memory = new Memory(user: user, text: 'TEXT').save()
+            sessionFactory.currentSession.flush()
+        when: 'update active'
+            memoryDaoService.forget(memory.id, user)
+        then: 'memory is inactive'
+            !Memory.get(memory.id).active
+    }
 }

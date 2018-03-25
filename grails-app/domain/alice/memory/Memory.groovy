@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 class Memory {
     AliceUser user
     String text
+    boolean active = true
 
     LocalDateTime dateCreated
     LocalDateTime lastUpdated

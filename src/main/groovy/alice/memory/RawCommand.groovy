@@ -11,4 +11,5 @@ class RawCommand {
     String yandexId
     String text
     Map payload
+    boolean buttonPressed
 }
