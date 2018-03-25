@@ -12,7 +12,7 @@ abstract class MemoryDaoService {
 
     @ReadOnly
     Memory findByUser(AliceUser user, int offset = 0) {
-        return Memory.findAllByUser(user, [sort: 'dateCreated', order: 'desc', offset: offset])[0]
+        return Memory.findAllByUserAndActive(user, true, [sort: 'dateCreated', order: 'desc', offset: offset])[0]
     }
 
     @Transactional
