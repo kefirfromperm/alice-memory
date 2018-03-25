@@ -29,6 +29,7 @@ class FullDialogSpec extends Specification {
             response.statusCode.is2xxSuccessful()
 
             response.json.response.text == 'Я могу запомнить и напомнить.'
+            response.json.response.buttons == null
             response.json.response.end_session == false
 
             response.json.session.session_id == '2eac4854-fce721f3-b845abba-20d60'
@@ -44,6 +45,7 @@ class FullDialogSpec extends Specification {
             response.statusCode.is2xxSuccessful()
 
             response.json.response.text == 'Запомнила.'
+            response.json.response.buttons == null
             response.json.response.end_session == false
 
             response.json.session.session_id == '2eac4854-fce721f3-b845abba-20d60'
@@ -59,6 +61,9 @@ class FullDialogSpec extends Specification {
             response.statusCode.is2xxSuccessful()
 
             response.json.response.text == 'Завтра мне к врачу'
+            response.json.response.buttons.size() == 2
+            response.json.response.buttons[0].title == 'Ещё'
+            response.json.response.buttons[1].title == 'Забудь'
             response.json.response.end_session == false
 
             response.json.session.session_id == '2eac4854-fce721f3-b845abba-20d60'

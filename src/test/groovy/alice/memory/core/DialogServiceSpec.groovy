@@ -1,6 +1,7 @@
 package alice.memory.core
 
 import alice.memory.CommandType
+import alice.memory.DialogResponse
 import alice.memory.Memory
 import alice.memory.AliceUser
 import alice.memory.dao.MemoryDaoService
@@ -51,20 +52,20 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234')
         when: 'remember text'
-            String response = service.remember(user, 'Test text')
+            DialogResponse response = service.remember(user, 'Test text')
         then:
             1 * service.memoryDaoService.saveMemory(user, 'Test text')
-            response == 'Запомнила.'
+            response.text == 'Запомнила.'
     }
 
     void 'remember empty text'() {
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234')
         when: 'remember empty text'
-            String response = service.remember(user, '')
+            DialogResponse response = service.remember(user, '')
         then:
             0 * service.memoryDaoService.saveMemory(user, 'Test text')
-            response == 'Что запомнить?'
+            response.text == 'Что запомнить?'
     }
 
     void 'test remind'() {
@@ -72,9 +73,12 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
             AliceUser user = new AliceUser(yandexId: '1234')
             service.memoryDaoService.findByUser(user) >> new Memory(text: 'Test response')
         when: 'call remind'
-            String response = service.remind(user)
+            DialogResponse response = service.remind(user)
         then:
-            response == 'Test response'
+            response.text == 'Test response'
+            response.buttons.size() == 2
+            response.buttons[0].title == 'Ещё'
+            response.buttons[1].title == 'Забудь'
     }
 
     void 'test remind without any memories'() {
@@ -82,15 +86,15 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
             AliceUser user = new AliceUser(yandexId: '1234')
             service.memoryDaoService.findByUser(user) >> null
         when: 'call remind'
-            String response = service.remind(user)
+            DialogResponse response = service.remind(user)
         then:
-            response == 'Я ничего не припоминаю.'
+            response.text == 'Я ничего не припоминаю.'
     }
 
     void 'test call without command'() {
         when: 'call without command'
-            String response = service.call('1234', 'test')
+            DialogResponse response = service.call('1234', 'test')
         then:
-            response == 'Я могу запомнить и напомнить.'
+            response.text == 'Я могу запомнить и напомнить.'
     }
 }

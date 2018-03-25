@@ -1,7 +1,9 @@
 package alice.memory.core
 
+import alice.memory.Button
 import alice.memory.CommandType
 import alice.memory.DialogCommand
+import alice.memory.DialogResponse
 import alice.memory.Memory
 import alice.memory.AliceUser
 import alice.memory.dao.MemoryDaoService
@@ -18,11 +20,11 @@ class DialogService {
     MemoryDaoService memoryDaoService
     TextProcessor textProcessor
 
-    String call(String userId, String text) {
+    DialogResponse call(String userId, String text) {
         DialogCommand command = determineCommand(text)
 
         AliceUser user = aliceUserDaoService.findOrSave(userId)
-        String response
+        DialogResponse response
         switch (command?.type) {
             case CommandType.REMEMBER:
                 response = remember(user, command.text)
@@ -31,26 +33,32 @@ class DialogService {
                 response = remind(user)
                 break
             default:
-                response = 'Я могу запомнить и напомнить.'
+                response = new DialogResponse(text: 'Я могу запомнить и напомнить.')
         }
         return response
     }
 
-    String remember(AliceUser user, String text) {
+    DialogResponse remember(AliceUser user, String text) {
         if (!StringUtils.isBlank(text)) {
             memoryDaoService.saveMemory(user, text)
-            return 'Запомнила.'
+            return new DialogResponse(text: 'Запомнила.')
         } else {
-            return 'Что запомнить?'
+            return new DialogResponse(text: 'Что запомнить?')
         }
     }
 
-    String remind(AliceUser user) {
+    DialogResponse remind(AliceUser user) {
         Memory memory = memoryDaoService.findByUser(user)
         if (memory) {
-            return process(memory.text)
+            return new DialogResponse(
+                    text: process(memory.text),
+                    buttons: [
+                            new Button(title: 'Ещё', payload: [offset: 1], hide: true),
+                            new Button(title: 'Забудь', hide: true)
+                    ]
+            )
         } else {
-            return 'Я ничего не припоминаю.'
+            return new DialogResponse(text: 'Я ничего не припоминаю.')
         }
     }
 

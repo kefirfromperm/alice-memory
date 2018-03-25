@@ -3,10 +3,15 @@ package alice.memory.dao
 import alice.memory.Memory
 import alice.memory.AliceUser
 import grails.gorm.services.Service
+import grails.gorm.transactions.ReadOnly
+import grails.gorm.transactions.Transactional
 
 @Service(Memory)
-interface MemoryDaoService {
-    Memory saveMemory(AliceUser user, String text)
+abstract class MemoryDaoService {
+    abstract Memory saveMemory(AliceUser user, String text)
 
-    Memory findByUser(AliceUser user)
+    @ReadOnly
+    Memory findByUser(AliceUser user, int offset = 0) {
+        return Memory.findAllByUser(user, [sort: 'dateCreated', order: 'desc', offset: offset])[0]
+    }
 }

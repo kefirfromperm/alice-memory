@@ -20,15 +20,32 @@ class ApplicationController {
 
         log.info("Request from user $userId: $text")
 
-        String responseText = dialogService.call(userId, text)
+        DialogResponse dialogResponse = dialogService.call(userId, text)
 
-        log.info("Response to user $userId: $responseText")
+        log.info("Response to user $userId: ${dialogResponse}")
+
+        def protocolResponse = [
+                text       : dialogResponse.text,
+                end_session: false
+        ]
+
+        if (dialogResponse.buttons) {
+            protocolResponse.buttons = dialogResponse.buttons.collect { Button button ->
+                def protocolButton = [
+                        title: button.title,
+                        hide : button.hide
+                ]
+
+                if (button.payload) {
+                    protocolButton.payload = button.payload
+                }
+
+                return protocolButton
+            }
+        }
 
         render([
-                response: [
-                        text       : responseText,
-                        end_session: false
-                ],
+                response: protocolResponse,
                 session : [
                         session_id: sessionId,
                         message_id: messageId,
