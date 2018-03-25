@@ -53,6 +53,7 @@ hibernate {
         use_second_level_cache = false
         use_query_cache = false
     }
+    dialect = 'org.hibernate.dialect.PostgreSQLDialect'
 }
 
 dataSource {
@@ -81,9 +82,9 @@ environments {
     production {
         dataSource {
             dbCreate = 'none'
-            url = 'jdbc:postgresql://localhost:5432/alice'
-            username = 'postgres'
-            password = 'postgres'
+            url = System.getenv('DATASOURCE_URL')
+            username = System.getenv('DATASOURCE_USERNAME')
+            password = System.getenv('DATASOURCE_PASSWORD')
         }
     }
 }
