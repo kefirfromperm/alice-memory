@@ -43,7 +43,7 @@ grails {
         }
     }
     urlmapping.cache.maxsize = 1000
-    controllers.defaultScope = singleton
+    controllers.defaultScope = 'singleton'
     converters.encoding = 'UTF-8'
 }
 
