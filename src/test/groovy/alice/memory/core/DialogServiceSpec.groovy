@@ -84,6 +84,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
     void 'test remind'() {
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234')
+        and: 'a memory'
             def memory = new Memory(text: 'Test response')
             memory.id = 42
             service.memoryDaoService.findByUser(user, 0) >> memory
@@ -109,6 +110,32 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
         then:
 
             response.text == 'Я ничего не припоминаю.'
+    }
+
+    void 'test remind offset change'(){
+        given: 'a user'
+            AliceUser user = new AliceUser(yandexId: '1234')
+        and: 'memories'
+            def memory1 = new Memory(text: 'Test response 1')
+            memory1.id = 42
+            def memory2 = new Memory(text: 'Test response 2')
+            memory2.id = 43
+            def memory3 = new Memory(text: 'Test response 3')
+            memory3.id = 44
+            service.memoryDaoService.findByUser(user, 0) >> memory3
+            service.memoryDaoService.findByUser(user, 1) >> memory2
+            service.memoryDaoService.findByUser(user, 2) >> memory1
+        when: 'call remind'
+            DialogResponse response = service.remind(user, 1)
+        then:
+            response.text == 'Test response 2'
+            response.buttons.size() == 2
+            response.buttons[0].title == 'Ещё'
+            response.buttons[0].payload.command == 'more'
+            response.buttons[0].payload.offset == 2
+            response.buttons[1].title == 'Забудь'
+            response.buttons[1].payload.command == 'forget'
+            response.buttons[1].payload.id == 43
     }
 
     void 'test call without command'() {

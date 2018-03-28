@@ -51,7 +51,7 @@ class DialogService {
             return new DialogResponse(
                     text: process(memory.text),
                     buttons: [
-                            new Button(title: 'Ещё', payload: [command: 'more', offset: 1], hide: true),
+                            new Button(title: 'Ещё', payload: [command: 'more', offset: offset + 1], hide: true),
                             new Button(title: 'Забудь', payload: [command: 'forget', id: memory.id], hide: true)
                     ]
             )
