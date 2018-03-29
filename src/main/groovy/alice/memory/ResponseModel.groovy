@@ -7,11 +7,10 @@ import groovy.transform.ToString
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
 @CompileStatic
-class RawCommand {
+class ResponseModel {
+    String text
+    List<Button> buttons = null
+    long messageId
     String userId
     String sessionId
-    long messageId
-    String text
-    Map payload
-    boolean buttonPressed
 }

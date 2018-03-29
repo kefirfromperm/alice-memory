@@ -1,33 +1,26 @@
-import grails.core.*
-import grails.util.*
-import grails.plugins.*
-import org.grails.core.artefact.*
+import alice.memory.Button
+import alice.memory.ResponseModel
 
 model {
-	GrailsApplication grailsApplication	
-	GrailsPluginManager pluginManager
+    ResponseModel model
 }
 
 json {
-	message "Welcome to Grails!"
-    environment Environment.current.name
-    appversion grailsApplication.metadata.getApplicationVersion()
-    grailsversion GrailsUtil.grailsVersion
-    appprofile grailsApplication.config.getProperty('grails.profile')
-    groovyversion GroovySystem.getVersion()
-    jvmversion System.getProperty('java.version')
-    reloadingagentenabled Environment.reloadingAgentEnabled
-    artefacts (
-        controllers: grailsApplication.getArtefactInfo(ControllerArtefactHandler.TYPE).classesByName.size(),
-        domains: grailsApplication.getArtefactInfo(DomainClassArtefactHandler.TYPE).classesByName.size(),
-        services: grailsApplication.getArtefactInfo(ServiceArtefactHandler.TYPE).classesByName.size()
-    )
-    controllers grailsApplication.getArtefacts(ControllerArtefactHandler.TYPE), { GrailsClass c ->
-        name c.fullName
-        logicalPropertyName c.logicalPropertyName
+    response {
+        text model.text
+        if (model.buttons) {
+            buttons(model.buttons) { Button button ->
+                title button.title
+                payload button.payload
+                hide true
+            }
+        }
+        end_session false
     }
-    plugins pluginManager.allPlugins, { GrailsPlugin plugin ->
-    	name plugin.name
-    	version plugin.version
+    session {
+        session_id model.sessionId
+        message_id model.messageId
+        user_id model.userId
     }
+    version '1.0'
 }

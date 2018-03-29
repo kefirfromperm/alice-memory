@@ -1,7 +1,6 @@
 package alice.memory
 
 import alice.memory.core.DialogService
-import grails.converters.JSON
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -11,68 +10,43 @@ class ApplicationController {
     DialogService dialogService
 
     def index() {
-        def json = request.JSON
-
-        long messageId = json.session.message_id
-        String sessionId = json.session.session_id
-        String userId = json.session.user_id
-
+        RawCommand command = bind(request.JSON)
+        ResponseModel model
         try {
-            RawCommand command = new RawCommand()
-            command.yandexId = userId
-            command.text = json.request.original_utterance
-            command.payload = json.request.payload
-            command.buttonPressed = (json.request.type == 'ButtonPressed')
-
-            log.info("Request from user $userId: $command")
+            log.info("Request $command")
 
             DialogResponse dialogResponse = dialogService.call(command)
 
-            log.info("Response to user $userId: ${dialogResponse}")
+            log.info("Response to user ${command.userId}: ${dialogResponse}")
 
-            def protocolResponse = [
-                    text       : dialogResponse.text,
-                    end_session: false
-            ]
-
-            if (dialogResponse.buttons) {
-                protocolResponse.buttons = dialogResponse.buttons.collect { Button button ->
-                    def protocolButton = [
-                            title: button.title,
-                            hide : button.hide
-                    ]
-
-                    if (button.payload) {
-                        protocolButton.payload = button.payload
-                    }
-
-                    return protocolButton
-                }
-            }
-
-            render([
-                    response: protocolResponse,
-                    session : [
-                            session_id: sessionId,
-                            message_id: messageId,
-                            user_id   : userId
-                    ],
-                    version : '1.0'
-            ] as JSON)
+            model = new ResponseModel(
+                    text: dialogResponse.text,
+                    buttons: dialogResponse.buttons,
+                    sessionId: command.sessionId,
+                    messageId: command.messageId,
+                    userId: command.userId
+            )
         } catch (Exception e) {
             log.error(e.message, e)
-            render([
-                    response: [
-                            text       : 'Что-то пошло не так.',
-                            end_session: false
-                    ],
-                    session : [
-                            session_id: sessionId,
-                            message_id: messageId,
-                            user_id   : userId
-                    ],
-                    version : '1.0'
-            ] as JSON)
+            model = new ResponseModel(
+                    text: 'Что-то пошло не так.',
+                    sessionId: command.sessionId,
+                    messageId: command.messageId,
+                    userId: command.userId
+            )
         }
+
+        render model: [model: model], view: 'index'
+    }
+
+    private static RawCommand bind(json) {
+        new RawCommand(
+                messageId: json.session.message_id,
+                sessionId: json.session.session_id,
+                userId: json.session.user_id,
+                text: json.request.original_utterance,
+                payload: json.request.payload,
+                buttonPressed: (json.request.type == 'ButtonPressed')
+        )
     }
 }

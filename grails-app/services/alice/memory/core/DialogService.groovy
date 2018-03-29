@@ -18,7 +18,7 @@ class DialogService {
     DialogResponse call(RawCommand rawCommand) {
         DialogCommand command = determineCommand(rawCommand)
 
-        AliceUser user = aliceUserDaoService.findOrSave(rawCommand.yandexId)
+        AliceUser user = aliceUserDaoService.findOrSave(rawCommand.userId)
         DialogResponse response
         switch (command?.type) {
             case CommandType.REMEMBER:

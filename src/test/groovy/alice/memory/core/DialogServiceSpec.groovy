@@ -140,7 +140,7 @@ class DialogServiceSpec extends Specification implements ServiceUnitTest<DialogS
 
     void 'test call without command'() {
         when: 'call without command'
-            DialogResponse response = service.call(new RawCommand(yandexId: '1234', text: 'test'))
+            DialogResponse response = service.call(new RawCommand(userId: '1234', text: 'test'))
         then:
             response.text == 'Я могу запомнить и напомнить.'
     }
