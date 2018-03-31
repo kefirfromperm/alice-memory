@@ -31,7 +31,10 @@ class DialogService {
                 response = forget(user, rawCommand.payload['id'] as long)
                 break
             default:
-                response = new DialogResponse(text: 'Я могу запомнить и напомнить.')
+                response = new DialogResponse(
+                        text: 'Я могу запомнить и напомнить.',
+                        tts: 'Я могу запомнить - и напомнить.'
+                )
         }
         return response
     }

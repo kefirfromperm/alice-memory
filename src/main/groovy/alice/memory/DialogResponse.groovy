@@ -9,5 +9,6 @@ import groovy.transform.ToString
 @CompileStatic
 class DialogResponse {
     String text
+    String tts
     List<Button> buttons
 }

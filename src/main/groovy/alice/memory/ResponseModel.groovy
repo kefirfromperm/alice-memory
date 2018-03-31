@@ -9,6 +9,7 @@ import groovy.transform.ToString
 @CompileStatic
 class ResponseModel {
     String text
+    String tts
     List<Button> buttons = null
     long messageId
     String userId

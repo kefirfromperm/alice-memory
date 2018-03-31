@@ -21,6 +21,7 @@ class ApplicationController {
 
             model = new ResponseModel(
                     text: dialogResponse.text,
+                    tts: dialogResponse.tts,
                     buttons: dialogResponse.buttons,
                     sessionId: command.sessionId,
                     messageId: command.messageId,

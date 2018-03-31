@@ -8,6 +8,9 @@ model {
 json {
     response {
         text model.text
+        if (model.tts) {
+            tts model.tts
+        }
         if (model.buttons) {
             buttons(model.buttons) { Button button ->
                 title button.title

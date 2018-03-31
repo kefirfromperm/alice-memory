@@ -30,6 +30,7 @@ class FullDialogSpec extends Specification {
             response.statusCode.is2xxSuccessful()
 
             response.json.response.text == 'Я могу запомнить и напомнить.'
+            response.json.response.tts == 'Я могу запомнить - и напомнить.'
             response.json.response.buttons == null
             response.json.response.end_session == false
 
