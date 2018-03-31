@@ -7,8 +7,7 @@ import groovy.transform.ToString
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
 @CompileStatic
-class DialogCommand {
-    String userId
+class TypeAndText {
+    CommandType type
     String text
-    Map payload
 }

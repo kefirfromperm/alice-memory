@@ -10,4 +10,6 @@ abstract class AliceUserDaoService {
     AliceUser findOrSave(String yandexId) {
         return AliceUser.findOrSaveByYandexId(yandexId)
     }
+
+    abstract AliceUser find(String yandexId)
 }
