@@ -33,7 +33,7 @@ class MemoryDaoServiceSpec extends Specification {
             memory.text == TEXT
     }
 
-    void 'test update'() {
+    void 'test forget'() {
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234').save()
         and: 'a memory'

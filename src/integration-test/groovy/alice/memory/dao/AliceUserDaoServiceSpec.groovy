@@ -29,4 +29,15 @@ class AliceUserDaoServiceSpec extends Specification {
         then: 'there is no new user'
             AliceUser.count() == 1
     }
+
+    void 'test find'() {
+        given: 'a user'
+            AliceUser original = new AliceUser(yandexId: USER_YANDEX_ID).save(flush: true)
+        when: 'try to find him'
+            AliceUser db = aliceUserDaoService.find('1234')
+        then:
+            db != null
+            db.id == original.id
+
+    }
 }
