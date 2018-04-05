@@ -38,6 +38,5 @@ class AliceUserDaoServiceSpec extends Specification {
         then:
             db != null
             db.id == original.id
-
     }
 }

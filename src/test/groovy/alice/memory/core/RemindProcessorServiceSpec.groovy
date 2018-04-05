@@ -10,7 +10,7 @@ import grails.test.hibernate.HibernateSpec
 import grails.testing.services.ServiceUnitTest
 import spock.lang.Unroll
 
-class RemindProcessorServiceSpec extends HibernateSpec implements ServiceUnitTest<RemindProcessorService>{
+class RemindProcessorServiceSpec extends HibernateSpec implements ServiceUnitTest<RemindProcessorService> {
 
     def setup() {
         service.aliceUserDaoService = Mock(AliceUserDaoService)
@@ -63,7 +63,7 @@ class RemindProcessorServiceSpec extends HibernateSpec implements ServiceUnitTes
             response.text == 'Я ничего не припоминаю.'
     }
 
-    void 'test remind offset change'(){
+    void 'test remind offset change'() {
         given: 'a user'
             AliceUser user = new AliceUser(yandexId: '1234')
             service.aliceUserDaoService.find('1234') >> user
@@ -88,5 +88,40 @@ class RemindProcessorServiceSpec extends HibernateSpec implements ServiceUnitTes
             response.buttons[1].title == 'Забудь'
             response.buttons[1].payload.command == 'forget'
             response.buttons[1].payload.id == 43
+    }
+
+    void 'test search'() {
+        given: 'a user'
+            AliceUser user = new AliceUser(yandexId: '1234')
+            service.aliceUserDaoService.find('1234') >> user
+        and: 'a memory'
+            def memory = new Memory(text: 'Test response')
+            memory.id = 42
+        when: 'query in text'
+            DialogResponse response = service.process(new DialogCommand(userId: '1234', text: 'test'))
+        then:
+            response.text == 'Test response'
+            response.buttons[0].title == 'Ещё'
+            response.buttons[0].payload.command == 'more'
+            response.buttons[0].payload.offset == 1
+            response.buttons[0].payload.query == 'test'
+            response.buttons[1].title == 'Забудь'
+            response.buttons[1].payload.command == 'forget'
+            response.buttons[1].payload.id == 42
+            1 * service.memoryDaoService.search(user, 'test', 0) >> memory
+            0 * service.memoryDaoService.findByUser(_ as AliceUser, _ as int)
+        when: 'query in payload'
+            response = service.process(new DialogCommand(userId: '1234', payload: [offset: 1, query: 'test']))
+        then:
+            response.text == 'Test response'
+            response.buttons[0].title == 'Ещё'
+            response.buttons[0].payload.command == 'more'
+            response.buttons[0].payload.offset == 2
+            response.buttons[0].payload.query == 'test'
+            response.buttons[1].title == 'Забудь'
+            response.buttons[1].payload.command == 'forget'
+            response.buttons[1].payload.id == 42
+            1 * service.memoryDaoService.search(user, 'test', 1) >> memory
+            0 * service.memoryDaoService.findByUser(_ as AliceUser, _ as int)
     }
 }
